@@ -1,0 +1,40 @@
+void setup(){
+  volatile char*outf=0x30;
+  *outf=0xff;
+}
+void command(long data){
+  volatile char*outf=0x31;
+  volatile long i;
+  for(i=0;i<8;i++){
+    if((data>>i) & 0x01){
+      *outf=0x02;
+      *outf=0x03;
+      *outf=0x02;
+    }
+    else{
+    *outf=0x00;
+    *outf=0x01;
+    *outf=0x00;
+  }
+  }
+  *outf=0x01;// Acknowledgement ("I finished ");
+}
+void write_data(){
+  volatile char*outf=0x31;
+  *outf=0x01;//start signal (CLK-1,DIO-0)
+  command(0x40);//(setting to auto incrementing mode)/(will write data from left digit to right digit)
+  *outf=0x03;//stop signal (CLK-1,DIO-1)
+  *outf=0x01;
+  command(0xC0);//Adress starting from leftmost digit
+  command(0x3F);
+  command(0x06);
+  command(0x5b);
+  command(0x4f);
+  *outf=0x03;
+  *outf=0x01;
+  command(0x8F);//Display (highly bright)
+  *outf=0x03;
+}
+void loop(){
+  write_data();
+}
