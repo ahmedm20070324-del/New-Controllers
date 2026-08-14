@@ -19,23 +19,24 @@ void command(long data){
   }
   *outf=0x01;// Acknowledgement ("I finished data transfer");
 }
-void write_data(){
+void write_data(long a,long b,long c,long d){
   volatile char*outf=0x31;
+  char A[11]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x00};
   *outf=0x01;//start signal (CLK-1,DIO-0)
   command(0x40);//(setting to auto incrementing mode)/(will write data from left digit to right digit)
   *outf=0x03;//stop signal (CLK-1,DIO-1)
   *outf=0x01;
   //sequential commands
   command(0xC0);//Adress starting from leftmost digit
-  command(0x3F);//Displays 1st digit
-  command(0x06);//Displays 2nd digit
-  command(0x5b);//Displays 3rd Digit
-  command(0x4f);//Displays 4th digit
+  command(A[a]);//Displays 1st digit
+  command(A[b]);//Displays 2nd digit
+  command(A[c]);//Displays 3rd Digit
+  command(A[d]);//Displays 4th digit
   *outf=0x03;
   *outf=0x01;
   command(0x8F);//Display (highly bright)
   *outf=0x03;
 }
 void loop(){
-  write_data();
+  write_data(6,7,8,9);
 }
