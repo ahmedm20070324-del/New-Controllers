@@ -21,13 +21,13 @@ void command(long data){
 }
 void write_data(long a,long b,long c,long d){
   volatile char*outf=0x31;
-  char A[11]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x00};
+  char A[11]={0x00,0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
   *outf=0x01;//start signal (CLK-1,DIO-0)
   command(0x40);//(setting to auto incrementing mode)/(will write data from left digit to right digit)
   *outf=0x03;//stop signal (CLK-1,DIO-1)
   *outf=0x01;
   //sequential commands
-  command(0xC0);//Adress starting from leftmost digit
+  command(0xC0);
   command(A[a]);//Displays 1st digit
   command(A[b]);//Displays 2nd digit
   command(A[c]);//Displays 3rd Digit
@@ -38,5 +38,27 @@ void write_data(long a,long b,long c,long d){
   *outf=0x03;
 }
 void loop(){
-  write_data(6,7,8,9);
+  volatile long i;
+  volatile long j,k,l,m;
+  for(k=1;k<11;k++){
+    for(l=1;l<11;l++){
+      for(j=1;j<11;j++){
+        for(m=1;m<11;m++){
+          if(k<=1 & l<=1 & j<=1){
+            write_data(0,0,0,m);
+          }
+          else if(k<=1 & l<=1){
+            write_data(0,0,j,m);
+          }
+          else if(k<=1){
+            write_data(0,l,j,m);
+          }
+          else{
+            write_data(k,l,j,m);
+          }
+          for(i=0;i<500000;i++);
+        }
+      }
+    }
+  }
 }
